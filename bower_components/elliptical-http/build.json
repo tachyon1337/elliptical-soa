@@ -1,0 +1,6 @@
+[
+
+    "./lib/browser.js",
+    "./lib/http.js"
+
+]

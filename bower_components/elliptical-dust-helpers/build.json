@@ -1,0 +1,4 @@
+[
+  "./node_modules/dustjs-helpers/dist/dust-helpers.js",
+  "./lib/helpers.js"
+]

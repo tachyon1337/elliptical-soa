@@ -1,0 +1,35 @@
+{
+  "name": "elliptical-soa",
+  "description": "Elliptical Service Oriented Architecture",
+  "version": "1.0.0",
+  "main": "dist/elliptical.soa.js",
+  "authors": [
+    "S. Francis"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "services",
+    "service",
+    "oriented",
+    "architecture"
+  ],
+  "homepage": "https://github.com/tachyon1337/elliptical-soa",
+  "moduleType": [],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "elliptical-utils": "~2.0.1",
+    "elliptical-class": "~1.0.2",
+    "elliptical-lodash": "~1.0.3",
+    "moment": "~2.10.6",
+    "async": "~1.5.0",
+    "elliptical-http": "~1.0.2",
+    "elliptical-dustjs": "~2.7.9",
+    "elliptical-dust-helpers": "~1.0.1"
+  }
+}

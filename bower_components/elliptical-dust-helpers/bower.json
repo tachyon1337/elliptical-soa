@@ -1,0 +1,28 @@
+{
+  "name": "elliptical-dust-helpers",
+  "description": "Dust Helpers",
+  "version":"1.0.1",
+  "main": "dist/dust.helpers.js",
+  "authors": [
+    "S. Francis"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "dust",
+    "helpers"
+  ],
+  "homepage": "https://github.com/tachyon1337/elliptical-dust-helpers",
+  "moduleType": [],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "elliptical-dustjs": "~2.7.3",
+    "moment": "~2.10.6",
+    "elliptical-utils": "~2.0.0"
+  }
+}

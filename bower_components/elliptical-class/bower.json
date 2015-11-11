@@ -1,0 +1,26 @@
+{
+  "name": "elliptical-class",
+  "description": "es5 Class Abstraction",
+  "version": "1.0.2",
+  "main": "dist/elliptical.class.js",
+  "authors": [
+    "S. Francis"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "es5",
+    "Class"
+  ],
+  "moduleType": [],
+  "homepage": "https://github.com/tachyon1337/elliptical-class",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "elliptical-utils": "~2.0.0"
+  }
+}
