@@ -11,7 +11,6 @@
   "./lib/provider.odata.js",
   "/lib/provider.rest.js",
   "./lib/provider.template.js",
-  "./lib/provider.validation.js",
   "./lib/provider.pagination.js",
   "./lib/provider.sort.js",
   "./lib/provder.navigation.js",

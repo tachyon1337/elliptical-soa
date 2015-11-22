@@ -49,9 +49,9 @@
 
             /**
              * get
-             * @param params {Object}
-             * @param query {Object}
-             * @param callback {Function}
+             * @param {object} params
+             * @param {object} query
+             * @param {function} callback
              * @public
              */
             get: function (params, query, callback) {
@@ -85,9 +85,9 @@
 
 
             /**
-             * post model
-             * @param params {Object}
-             * @param callback {Function}
+             * post
+             * @param {object} params
+             * @param {function} callback
              * @public
              */
             post: function (params, callback) {
@@ -98,9 +98,9 @@
             },
 
             /**
-             * put model
-             * @param params {Object}
-             * @param callback {Function}
+             * put
+             * @param {object} params
+             * @param {function} callback
              * @public
              */
             put: function (params, callback) {
@@ -112,9 +112,9 @@
 
 
             /**
-             * delete model
-             * @param params {Object}
-             * @param callback {Function}
+             * delete
+             * @param {object} params
+             * @param {function} callback
              * @public
              */
             delete: function (params, callback) {
@@ -136,8 +136,8 @@
             _data: null,
 
             /**
-             *
-             * @param params {Object}
+             * @constructs
+             * @param {object} params
              * @public
              */
             init: function (params) {
@@ -147,8 +147,8 @@
             },
 
             /**
-             * @param params {Object}
-             * @param callback {Function}
+             * @param {object} params
+             * @param {function} callback
              * @public
              */
             get: function (params, callback) {
@@ -160,8 +160,8 @@
             },
 
             /**
-             * @param params {Object}
-             * @param callback {Function}
+             * @param {object} params
+             * @param {function} callback
              * @public
              */
             save: function (params, callback) {
@@ -183,8 +183,9 @@
             },
 
             /**
-             * @param params {Object}
-             * @param callback {Function}
+             * @param {object} params
+             * @param {function} callback
+             * @public
              */
             put: function (params, callback) {
                 var data = this._data;
@@ -196,6 +197,7 @@
             /**
              *
              * @param {object} val
+             * @public
              */
             filter: function (val) {
                 if(val){
@@ -212,12 +214,18 @@
             /**
              *
              * @param {object} val
+             * @public
              */
             orderBy: function (val) {
                 if(val && !object.isEmpty(val))this.$query.orderBy = val;
                 return this;
             },
 
+            /**
+             *
+             * @param {object} val
+             * @public
+             */
             orderByDesc: function (val) {
                 if(val && !object.isEmpty(val))this.$query.orderByDesc = val;
                 return this;
@@ -235,6 +243,7 @@
             /**
              *
              * @param {object} val
+             * @public
              */
             skip: function (val) {
                 if(val && !object.isEmpty(val))this.$query.skip = val;
@@ -243,7 +252,8 @@
 
             /**
              *
-             * @param params {Object}
+             * @param {object} params
+             * @public
              */
             paginate: function (params) {
                 try {
@@ -256,8 +266,8 @@
             },
 
             /**
-             * @param params {Object}
-             * @param callback  {Function}
+             * @param {object} params
+             * @param {function} callback
              * @public
              */
             delete: function (params, callback) {
@@ -664,6 +674,22 @@
     }
 }(this, function (Class) {
 
+    function _getCookies() {
+        var cookies = [];
+        if (document.cookie && document.cookie != '') {
+            var _cookies = document.cookie.split(';');
+            for (var i = 0; i < _cookies.length; i++) {
+                var name_value = _cookies[i].split("=");
+                name_value[0] = name_value[0].replace(/^ /, '');
+                cookies.push({
+                    key:decodeURIComponent(name_value[0]),
+                    value:decodeURIComponent(name_value[1])
+                })
+            }
+        }
+        return cookies;
+    }
+
     var $Cookie;
     $Cookie = Class.extend({
 
@@ -678,7 +704,7 @@
             try {
                 value = JSON.parse(value);
             } catch (ex) {
-
+                value=null;
             }
             return value;
         },
@@ -703,6 +729,21 @@
 
         /**
          *
+         * @param {number} index
+         * @returns {string}
+         * @public
+         */
+        key:function(index){
+            var cookies = _getCookies();
+            try{
+                return cookies[index].key;
+            }catch(ex){
+                return null;
+            }
+        },
+
+        /**
+         *
          * @param {string} key
          * @param {object} params
          * @public
@@ -713,12 +754,21 @@
         },
 
         /**
+         *
+         * @returns {number}
+         * @public
+         */
+        count:function(){
+            var cookies = document.cookie.split('; ');
+            return cookies.length;
+        },
+
+        /**
          * @public
          */
         clear:function(){
             throw "Method 'clear' not implemented by the cookie provider";
         }
-
 
     }, {});
 
@@ -784,10 +834,28 @@
 
         /**
          *
+         * @param {number} index
+         * @returns {string}
+         * @public
+         */
+        key:function(index){
+            return sessionStorage.key(index);
+        },
+
+        /**
+         *
          * @param {string} key
          */
         delete: function (key) {
             localStorage.removeItem(key);
+        },
+
+        /**
+         * @returns {number}
+         * @public
+         */
+        count:function(){
+            return localStorage.length;
         },
 
         /**
@@ -834,17 +902,38 @@
     var $OData;
     $OData = Provider.extend({
 
+        /**
+         *
+         * @param {string} endpoint
+         * @param {*} filter
+         * @returns {string}
+         */
         filter: function (endpoint, filter) {
             if (typeof filter === 'object') filter = this._getFilterString(filter);
             var encodedFilter = '$filter=' + encodeURIComponent(filter);
             return (endpoint.indexOf('?') > -1) ? '&' + encodedFilter : '?' + encodedFilter;
         },
 
+        /**
+         *
+         * @param {string} endpoint
+         * @param {string} orderBy
+         * @returns {string}
+         * @public
+         */
         orderBy: function (endpoint, orderBy) {
             var encodedOrderBy = '$orderby=' + encodeURIComponent(orderBy);
             return (endpoint.indexOf('?') > -1) ? '&' + encodedOrderBy : '?' + encodedOrderBy;
         },
 
+        /**
+         *
+         * @param endpoint
+         * @param orderBy
+         * @param orderByDesc
+         * @returns {string}
+         * @public
+         */
         orderByDesc: function (endpoint, orderBy, orderByDesc) {
             if (orderBy !== undefined) return ', ' + encodeURIComponent(orderByDesc + ' desc');
             else {
@@ -853,16 +942,37 @@
             }
         },
 
+        /**
+         *
+         * @param {string} endpoint
+         * @param {string} top
+         * @returns {string}
+         * @public
+         */
         top: function (endpoint, top) {
             var encodedTop = '$top=' + top;
             return (endpoint.indexOf('?') > -1) ? '&' + encodedTop : '?' + encodedTop;
         },
 
+        /**
+         *
+         * @param {string} endpoint
+         * @param {string} skip
+         * @returns {string}
+         * @public
+         */
         skip: function (endpoint, skip) {
             var encodedSkip = '$skip=' + skip;
             return (endpoint.indexOf('?') > -1) ? '&' + encodedSkip : '?' + encodedSkip;
         },
 
+        /**
+         *
+         * @param {string} endpoint
+         * @param {object} params
+         * @returns {string}
+         * @public
+         */
         paginate: function (endpoint, params) {
             var page = params.page,
                 pageSize = params.pageSize,
@@ -1039,7 +1149,7 @@
 
         /**
          *
-         * @returns {String}
+         * @returns {string}
          * @public
          */
         getBase: function () {
@@ -1049,7 +1159,8 @@
 
         /**
          *
-         * @param opts {Object}
+         * @param {object} opts
+         * @public
          */
         $setOpts: function (opts) {
             if (opts) {
@@ -1059,6 +1170,11 @@
             }
         },
 
+        /**
+         *
+         * @param {object} $provider
+         * @public
+         */
         $setProvider: function ($provider) {
             this.$provider = $provider;
 
@@ -1066,10 +1182,9 @@
 
         /**
          *
-         * @param template {String}
-         * @param context {Object}
-         * @param callback {Function}
-         * @returns callback
+         * @param {string} template
+         * @param {object} context
+         * @param {function} callback
          * @public
          */
         render: function (template, context, callback) {
@@ -1103,6 +1218,7 @@
          * set the provider as a global to the window object
          * on the browser side, if compiled templates are referenced in script tag, you'll need to set
          * a reference to dust on the window object
+         * @public
          */
         setBrowserGlobal: function () {
             if (typeof window != 'undefined') window.dust = this.$provider;
@@ -1110,8 +1226,8 @@
 
     }, {
         /**
-         * new instance init
-         * @param base {boolean}
+         * @constructs
+         * @param {boolean} base
          */
         init: function (base) {
             if (base) this.constructor._data.base = true;
@@ -1122,10 +1238,9 @@
          * renders with a context base
          * use render method on template provider's prototype to mixin a base context
          *
-         * @param template {String}
-         * @param context {Object}
-         * @param callback {Function}
-         * @returns callback
+         * @param {string} template
+         * @param {object} context
+         * @param {function} callback
          * @public
          */
         render: function (template, context, callback) {
@@ -1203,11 +1318,11 @@
 
     /**
      * if template cache is empty, load it from the store or client-side, load it from scripts
-     * @param model {String}
-     * @param $store {Object}
-     * @param $provider {Object}
-     * @param api {String}
-     * @param callback {Function}
+     * @param {string} model
+     * @param {object} $store
+     * @param {object} $provider
+     * @param {string} api
+     * @param {function} callback
      * @private
      */
     function _loadTemplateCacheFromStore(model, $store, $provider, api, callback) {
@@ -1255,177 +1370,6 @@
 }));
 
 
-
-/*
- * =============================================================
- * elliptical.$Validation
- * =============================================================
- *
- */
-
-//umd pattern
-
-(function (root, factory) {
-    if (typeof module !== 'undefined' && module.exports) {
-        //commonjs
-        module.exports = factory(require('elliptical-utils'),require('./provider'));
-    } else if (typeof define === 'function' && define.amd) {
-        // AMD. Register as an anonymous module.
-        define(['elliptical-utils','./provider'], factory);
-    } else {
-        // Browser globals (root is window)
-
-        root.elliptical.$Validation = factory(root.elliptical.utils,root.elliptical.Provider);
-        root.returnExports = root.elliptical.$Validation;
-    }
-}(this, function (utils,Provider) {
-    var string = utils.string;
-
-    var $Validation;
-    $Validation = Provider.extend({
-        schemas: [],
-
-        submitLabel: 'submitLabel',
-
-        successMessage: 'Successfully Submitted...',
-
-        post: function (form, name, callback) {
-            var err = null;
-            var schema = this.getSchema(name);
-            for (var key in schema) {
-                if (schema.hasOwnProperty(key)) {
-                    if (schema[key].required && (typeof form[key] === 'undefined' || form[key] === '')) {
-                        form[key + '_placeholder'] = string.camelCaseToSpacedTitleCase(key) + ' Required...';
-                        form[key + '_error'] = 'error';
-                        if (!err) err = this.error();
-                    } else if (schema[key].validate && typeof schema[key].validate === 'function') {
-                        var msg = schema[key].validate(form);
-                        if (msg) {
-                            form[key + '_placeholder'] = msg;
-                            form[key + '_error'] = 'error';
-                            form[key] = '';
-                            if (!err) err = this.error();
-                        }
-                    } else if (schema[key].confirm) {
-                        if (form[key] && form['confirm' + key]) {
-                            if (form[key] != form['confirm' + key]) {
-                                form[key + '_placeholder'] = 'Does Not Match...';
-                                form[key + '_error'] = 'error';
-                                form['confirm' + key + '_placeholder'] = 'Does Not Match...';
-                                form['confirm' + key + '_error'] = 'error';
-                                if (!err) err = this.error();
-                            }
-                        }
-                    } else if (key === 'validate' && typeof schema[key] === 'function') {
-                        var msg = schema['validate'](form);
-                        if (msg) err = this.error(msg);
-                    }
-                }
-            }
-            if (err) {
-                form = this.addSubmitLabel(form, false);
-                callback(err, form);
-            } else {
-                form = this.deleteProperties(form);
-                callback(null, form);
-            }
-
-
-        },
-
-        put: function (schema, name, callback) {
-            var obj = {
-                name: name,
-                schema: schema
-            };
-
-            var schemas = this.schemas;
-            schemas.push(obj);
-            if (callback) callback(null, obj);
-        },
-
-        onError: function (form, msg) {
-            form = this.addSubmitLabel(form, msg, false);
-            return form;
-        },
-
-        onSuccess: function (form) {
-            form = this.addEmptySubmitLabel(form);
-            return form;
-        },
-
-        getSchema: function (name) {
-            var schema = null;
-            for (var i = 0; i < this.schemas.length; i++) {
-                if (this.schemas[i].name.toLowerCase() === name.toLowerCase()) {
-                    schema = this.schemas[i].schema;
-                    break;
-                }
-            }
-            return schema;
-        },
-
-        error: function (msg) {
-            if (typeof msg === 'undefined') msg = 'Form Submission Error';
-            var err = {};
-            err.message = msg;
-            err.css = 'error';
-            err.cssDisplay = 'visible';
-            return err;
-        },
-
-        addSubmitLabel: function (form, msg, valid) {
-            if (typeof valid === 'undefined') {
-                valid = msg;
-                msg = undefined;
-            }
-            var obj;
-            if (valid) obj = this.success();
-            else obj = this.error(msg);
-            form[this.submitLabel] = obj;
-            return form;
-        },
-
-        addEmptySubmitLabel: function (form) {
-            form[this.submitLabel] = this.emptyLabelObject();
-            return form;
-        },
-
-        success: function () {
-            var msg = {};
-            msg.message = this.successMessage;
-            msg.css = 'success';
-            msg.cssDisplay = 'visible';
-            return msg;
-        },
-
-        emptyLabelObject: function () {
-            var msg = {};
-            msg.message = '&nbsp;';
-            msg.css = '';
-            msg.cssDisplay = '';
-            return msg;
-        },
-
-        deleteProperties: function (form) {
-            for (var key in form) {
-                if (form.hasOwnProperty(key)) {
-                    if (form['confirm' + key]) delete form['confirm' + key];
-                    if (form['confirm' + key + '_placeholder']) delete form['confirm' + key + '_placeholder'];
-                    if (form['confirm' + key + '_error']) delete form['confirm' + key + '_error'];
-                    if (form[key + '_placeholder'])delete form[key + '_placeholder'];
-                    if (form[key + '_error']) delete form[key + '_error'];
-                }
-            }
-
-            return form;
-        }
-
-    }, {});
-
-    return $Validation;
-}));
-
 /*
  * =============================================================
  * elliptical.$Pagination
@@ -1463,6 +1407,13 @@
         data: 'data',
         spread: 10,
 
+        /**
+         *
+         * @param {object} params
+         * @param {object} data
+         * @returns {{pagination, data}|*}
+         * @public
+         */
         get: function (params, data) {
 
             var count_ = this.count;
@@ -1475,10 +1426,10 @@
 
             /**
              *
-             * @param params {Object}
-             * @param result {Object}
+             * @param {object} params
+             * @param {object} result
              *
-             * @returns {Object}
+             * @returns {object}
              * @qpi private
              */
             function _pagination(params, result) {
@@ -1716,6 +1667,11 @@
             }
         },
 
+        /**
+         *
+         * @param {object} params
+         * @public
+         */
         refresh: function (params) {
             if (typeof params === 'string') Location.redirect(params);
         },
@@ -1770,36 +1726,88 @@
         '@resource':'Notify', //{String}
         $provider:null,
 
+        /**
+         *
+         * @param {string} text
+         * @param {object} params
+         * @returns {*}
+         * @public
+         */
         show:function(text,params){
             return this.$provider.show(text,params);
         },
 
+        /**
+         *
+         * @returns {*}
+         * @public
+         */
         hide:function(){
             return this.$provider.hide();
         },
 
+        /**
+         *
+         * @returns {*}
+         * @public
+         */
         visible:function(){
             return this.$provider.visible();
         },
 
+        /**
+         *
+         * @returns {*}
+         * @public
+         */
         toggle:function(){
             return this.$provider.toggle();
         }
 
     },{
 
+        /**
+         * @constructs
+         * @param {object} provider
+         */
+        init:function(provider){
+            if(provider && typeof provider==='object') this.constructor.$provider=provider;
+        },
+
+        /**
+         *
+         * @param {string} text
+         * @param {object} params
+         * @returns {*}
+         * @public
+         */
         show:function(text,params){
             return this.constructor.show(text,params);
         },
 
+        /**
+         *
+         * @returns {*}
+         * @public
+         */
         hide:function(){
             return this.constructor.hide();
         },
 
+        /**
+         *
+         * @returns {*}
+         * @public
+         */
         visible:function(){
             return this.constructor.visible();
         },
 
+        /**
+         *
+         * @returns {*}
+         * @public
+         */
         toggle:function(){
             return this.constructor.toggle();
         }
@@ -1839,27 +1847,55 @@
         '@resource':'Dialog', //{String}
         $provider:null,
 
+        /**
+         * @param {object} params
+         * @public
+         */
         show:function(params){
             return this.$provider.show(params);
         },
 
+        /**
+         * @public
+         */
         hide:function(){
             return this.$provider.hide();
         },
 
+        /**
+         * @param {object} params
+         */
         setContent:function(params){
             return this.$provider.setContent(params);
         }
 
     },{
+        /**
+         * @constructs
+         * @param {object} provider
+         */
+        init:function(provider){
+            if(provider && typeof provider==='object') this.constructor.$provider=provider;
+        },
+
+        /**
+         * @param {object} params
+         * @public
+         */
         show:function(params){
             return this.constructor.show(params);
         },
 
+        /**
+         * @public
+         */
         hide:function(){
             return this.constructor.hide();
         },
 
+        /**
+         * @param {object} params
+         */
         setContent:function(params){
             return this.constructor.setContent(params);
         }
@@ -1898,38 +1934,130 @@
 }(this, function (Class) {
 
     var Store;
-    Store=elliptical.Class.extend({
+    Store=Class.extend({
         '@resource':'Store',
         $provider:null,
 
+        /**
+         *
+         * @param {string} key
+         * @returns {*}
+         * @public
+         */
         get:function(key){
             return this.$provider.get(key);
         },
 
+        /**
+         *
+         * @param {string} key
+         * @param {object} value
+         * @param {object} params
+         * @public
+         */
         set:function(key,value,params){
             return this.$provider.set(key,value,params);
         },
 
+        /**
+         *
+         * @param {number} index
+         * @returns {string}
+         * @public
+         */
+        key:function(index){
+            return this.$provider.key(index);
+        },
+
+        /**
+         *
+         * @param {string} key
+         * @public
+         */
         delete:function(key){
             return this.$provider.delete(key);
         },
 
+        /**
+         *
+         * @returns {number}
+         * @public
+         */
+        count:function(){
+            return this.$provider.count();
+        },
+
+        /**
+         *
+         * @public
+         */
         clear:function(){
             return this.$provider.clear();
         }
     },{
+        /**
+         * Constructor
+         * @constructs
+         * @param {string} name
+         * @param {object} provider
+         */
+        init:function(name,provider){
+            if(name) this.constructor["@resource"]=name;
+        },
+
+        /**
+         *
+         * @param {string} key
+         * @returns {*}
+         * @public
+         */
         get:function(key){
             return this.constructor.get(key);
         },
 
+        /**
+         *
+         * @param {string} key
+         * @param {object} value
+         * @param {object} params
+         * @public
+         */
         set:function(key,value,params){
             return this.constructor.set(key,value,params);
         },
 
+        /**
+         *
+         * @param {number} index
+         * @returns {string}
+         * @public
+         */
+        key:function(index){
+            return this.constructor.key(index);
+        },
+
+        /**
+         *
+         * @param {string} key
+         * @public
+         */
         delete:function(key){
             return this.constructor.delete(key);
         },
 
+        /**
+         *
+         * @returns {number}
+         * @public
+         */
+        count:function(){
+            return this.constructor.count();
+        },
+
+        /**
+         *
+         * @public
+         */
         clear:function(){
             return this.constructor.clear();
         }
@@ -1960,7 +2088,7 @@
         root.elliptical.Validation=factory(root.elliptical.Service);
         root.returnExports = root.elliptical.Validation;
     }
-}(this, function (elliptical,providers) {
+}(this, function (Service,providers) {
     var $Validation=providers.$Validation;
 
     var Validation=Service.extend({
@@ -1969,10 +2097,10 @@
         schemas:null,
 
         /**
-         *
-         * @param data {Object}
-         * @param name {String}
-         * @param callback {Function}
+         * @param {object} data
+         * @param {string} name
+         * @param {function} callback
+         * @public
          */
         post: function (data, name, callback) {
             if (this.schemas && !this.$provider.schemas) {
@@ -1981,6 +2109,13 @@
             this.$provider.post(data,name,callback);
         },
 
+        /**
+         *
+         * @param {object} data
+         * @param {string} name
+         * @param {function} callback
+         * @public
+         */
         put: function (data, name, callback) {
             if (this.schemas && !this.$provider.schemas) {
                 this.$provider.schemas = this.schemas;
@@ -1990,8 +2125,9 @@
 
         /**
          *
-         * @param data {Object}
-         * @returns {Object}
+         * @param {object} data
+         * @returns {*}
+         * @public
          */
         onSuccess:function(data){
             return this.$provider.onSuccess(data);
@@ -1999,9 +2135,10 @@
 
         /**
          *
-         * @param data {Object}
-         * @param msg {String}
-         * @returns {Object}
+         * @param {object} data
+         * @param {string} msg
+         * @returns {*}
+         * @public
          */
         onError:function(data,msg){
             return this.$provider.onError(data,msg);
@@ -2010,11 +2147,23 @@
 
 
     }, {
+        /**
+         *
+         * @param {object} $provider
+         * @public
+         */
         init: function ($provider) {
             ($provider !== undefined) ? this.$provider = $provider : this.$provider = null;
 
         },
 
+        /**
+         *
+         * @param {object} data
+         * @param {string} name
+         * @param {function} callback
+         * @public
+         */
         post: function (data, name, callback) {
             var $provider = (this.$provider) ? this.$provider : this.constructor.$provider;
             if (this.schemas && !this.$provider.schemas) {
@@ -2023,6 +2172,13 @@
             $provider.post(data, name, callback);
         },
 
+        /**
+         *
+         * @param {object} data
+         * @param {string} name
+         * @param {function} callback
+         * @public
+         */
         put: function (data, name, callback) {
             var $provider = (this.$provider) ? this.$provider : this.constructor.$provider;
             if (this.schemas && !$provider.schemas) {
@@ -2033,8 +2189,9 @@
 
         /**
          *
-         * @param data {Object}
-         * @returns {Object}
+         * @param {object} data
+         * @returns {*}
+         * @public
          */
         onSuccess: function (data) {
             var $provider = (this.$provider) ? this.$provider : this.constructor.$provider;
@@ -2043,9 +2200,10 @@
 
         /**
          *
-         * @param data {Object}
-         * @param msg {String}
-         * @returns {Object}
+         * @param {object} data
+         * @param {string} msg
+         * @returns {*}
+         * @public
          */
         onError: function (data, msg) {
             var $provider = (this.$provider) ? this.$provider : this.constructor.$provider;
@@ -2088,11 +2246,23 @@
         '@resource':'Search',
         $provider:null,
 
+        /**
+         *
+         * @param {object} params
+         * @returns {*}
+         * @public
+         */
         find:function(params){
             return this.$provider.find(params);
         }
 
     },{
+        /**
+         *
+         * @param {object} params
+         * @returns {*}
+         * @public
+         */
         find:function(params){
             return this.constructor.find(params);
         }
@@ -2132,27 +2302,63 @@
         '@resource':'Sort',
         $provider:null,
 
+        /**
+         *
+         * @param {object} params
+         * @returns {*}
+         * @public
+         */
         sort:function(params){
             return this.$provider.sort(params);
         },
 
+        /**
+         *
+         * @param {object} params
+         * @returns {*}
+         * @public
+         */
         sorted:function(params){
             return this.$provider.sorted(params);
         },
 
+        /**
+         *
+         * @param {object} params
+         * @returns {*}
+         * @public
+         */
         refresh:function(params){
             return this.$provider.refresh(params);
         }
 
     },{
+        /**
+         *
+         * @param {object} params
+         * @returns {*}
+         * @public
+         */
         sort:function(params){
             return this.constructor.sort(params);
         },
 
+        /**
+         *
+         * @param {object} params
+         * @returns {*}
+         * @public
+         */
         sorted:function(params){
             return this.constructor.sorted(params);
         },
 
+        /**
+         *
+         * @param {object} params
+         * @returns {*}
+         * @public
+         */
         refresh:function(params){
             return this.constructor.refresh(params);
         }
