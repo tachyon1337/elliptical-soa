@@ -1405,7 +1405,7 @@
                 var ctrlName = template.name.toLowerCase();
                 var ctrlView = template.view.toLowerCase();
                 var ctrlTemplate = ctrlName + '.' + ctrlView;
-                if (!_.isEmpty(cache)) {
+                if (!object.isEmpty(cache)) {
                     var result = cache[ctrlTemplate];
                     if (result) $provider.render(ctrlTemplate, context, callback);
                     else _loadTemplateFromControllerView(this, ctrlName, ctrlView, context, callback);
