@@ -7,7 +7,7 @@
   "./lib/debounce.js",
   "./lib/provider.cookie.js",
   "./lib/provider.local.js",
-  "./lib/provder.session.js",
+  "./lib/provider.session.js",
   "./lib/provider.memory.js",
   "./lib/provider.odata.js",
   "/lib/provider.rest.js",
