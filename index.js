@@ -10,6 +10,7 @@ module.exports={
     $Cookie:require('./lib/provider.cookie'),
     $Local:require('./lib/provider.local'),
     $Session:require('./lib/provder.session'),
+    $Memory:require('./lib/provider.memory'),
     $OData:require('./lib/provider.odata'),
     $Rest:require('/lib/provider.rest'),
     $Template:require('./lib/provider.template'),

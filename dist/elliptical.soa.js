@@ -878,6 +878,118 @@
 
 /*
  * =============================================================
+ * elliptical.$Local
+ * =============================================================
+ *
+ */
+
+//umd pattern
+
+(function (root, factory) {
+    if (typeof module !== 'undefined' && module.exports) {
+        //commonjs
+        module.exports = factory(require('elliptical-class'));
+    } else if (typeof define === 'function' && define.amd) {
+        // AMD. Register as an anonymous module.
+        define(['elliptical-class'], factory);
+    } else {
+        // Browser globals (root is window)
+        root.elliptical.$Memory = factory(root.elliptical.Class);
+        root.returnExports = root.elliptical.$Memory;
+    }
+}(this, function (Class) {
+
+    var $Memory;
+    $Memory = Class.extend({
+
+        _Map: {
+            _map:null,
+            get dictionary(){
+                if(this._map) return this._map;
+                else return new Map();
+            }
+        },
+
+
+        /**
+         * @param {string} key
+         * @returns {object}
+         * @public
+         */
+        get: function (key) {
+            var map=this._Map.dictionary;
+            return map.get(key);
+
+        },
+
+        /**
+         * @param {string} key
+         * @param {object} value
+         * @param {object} params - not used by this provider
+         * @public
+         */
+        set: function (key, value, params) {
+            var map=this._Map.dictionary;
+            map.set(key,value);
+        },
+
+        /**
+         *
+         * @param {number} index
+         * @returns {string}
+         * @public
+         */
+        key:function(index){
+            var map=this._Map.dictionary;
+            var i=0;
+            var key_=null;
+            map.forEach(function(value, key) {
+                if(index===i) key_=key;
+                i++;
+            });
+
+            return key_;
+        },
+
+        /**
+         *
+         * @param {string} key
+         */
+        delete: function (key) {
+            var map=this._Map.dictionary;
+            map.delete(key);
+        },
+
+        /**
+         * @returns {number}
+         * @public
+         */
+        count:function(){
+            var map=this._Map.dictionary;
+            return map.size;
+        },
+
+        /**
+         * @public
+         */
+        clear: function () {
+            var map=this._Map.dictionary;
+            map.clear();
+        }
+
+
+    }, {});
+
+
+
+    return $Memory;
+
+}));
+
+
+
+/*
+ * =============================================================
  * elliptical.$OData
  * =============================================================
  */
@@ -1768,10 +1880,18 @@
 
         /**
          * @constructs
+         * @param {string} name
          * @param {object} provider
          */
-        init:function(provider){
-            if(provider && typeof provider==='object') this.constructor.$provider=provider;
+        init:function(name,provider){
+            var length = arguments.length;
+            if(length===1){
+                if(typeof name==='string') this.constructor["@resource"]=name;
+                else this.constructor.$provider=name;
+            }else if(length===2){
+                this.constructor["@resource"]=name;
+                this.constructor.$provider=provider;
+            }
         },
 
         /**
@@ -1872,10 +1992,18 @@
     },{
         /**
          * @constructs
+         * @param {string} name
          * @param {object} provider
          */
-        init:function(provider){
-            if(provider && typeof provider==='object') this.constructor.$provider=provider;
+        init:function(name,provider){
+            var length = arguments.length;
+            if(length===1){
+                if(typeof name==='string') this.constructor["@resource"]=name;
+                else this.constructor.$provider=name;
+            }else if(length===2){
+                this.constructor["@resource"]=name;
+                this.constructor.$provider=provider;
+            }
         },
 
         /**
@@ -2002,7 +2130,14 @@
          * @param {object} provider
          */
         init:function(name,provider){
-            if(name) this.constructor["@resource"]=name;
+            var length = arguments.length;
+            if(length===1){
+                if(typeof name==='string') this.constructor["@resource"]=name;
+                else this.constructor.$provider=name;
+            }else if(length===2){
+                this.constructor["@resource"]=name;
+                this.constructor.$provider=provider;
+            }
         },
 
         /**
@@ -2148,12 +2283,20 @@
 
     }, {
         /**
-         *
-         * @param {object} $provider
+         * @constructs
+         * @param {string} name
+         * @param {object} provider
          * @public
          */
-        init: function ($provider) {
-            ($provider !== undefined) ? this.$provider = $provider : this.$provider = null;
+        init: function (name,provider) {
+            var length = arguments.length;
+            if(length===1){
+                if(typeof name==='string') this.constructor["@resource"]=name;
+                else this.constructor.$provider=name;
+            }else if(length===2){
+                this.constructor["@resource"]=name;
+                this.constructor.$provider=provider;
+            }
 
         },
 
@@ -2258,6 +2401,25 @@
 
     },{
         /**
+         * @constructs
+         * @param {string} name
+         * @param {object} provider
+         * @public
+         */
+        init: function (name,provider) {
+            var length = arguments.length;
+            if(length===1){
+                if(typeof name==='string') this.constructor["@resource"]=name;
+                else this.constructor.$provider=name;
+            }else if(length===2){
+                this.constructor["@resource"]=name;
+                this.constructor.$provider=provider;
+            }
+
+        },
+
+
+        /**
          *
          * @param {object} params
          * @returns {*}
@@ -2333,6 +2495,25 @@
         }
 
     },{
+        /**
+         * @constructs
+         * @param {string} name
+         * @param {object} provider
+         * @public
+         */
+        init: function (name,provider) {
+            var length = arguments.length;
+            if(length===1){
+                if(typeof name==='string') this.constructor["@resource"]=name;
+                else this.constructor.$provider=name;
+            }else if(length===2){
+                this.constructor["@resource"]=name;
+                this.constructor.$provider=provider;
+            }
+
+        },
+
+
         /**
          *
          * @param {object} params
