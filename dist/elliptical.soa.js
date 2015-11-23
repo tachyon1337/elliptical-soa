@@ -17,7 +17,7 @@
         define(['elliptical-utils','elliptical-class'], factory);
     } else {
         // Browser globals (root is window)
-        root.elliptical.Model=factory(root.elliptical.utils,root.elliptical.Class);
+        root.elliptical.Service=factory(root.elliptical.utils,root.elliptical.Class);
         root.returnExports = root.elliptical.Service;
     }
 }(this, function (utils,Class) {
@@ -1734,7 +1734,7 @@
         define(['elliptical-class','elliptical-location'], factory);
     } else {
         // Browser globals (root is window)
-        root.elliptical.$Sort = factory(root.elliptical.class,root.elliptical.Location);
+        root.elliptical.$Sort = factory(root.elliptical.Class,root.elliptical.Location);
         root.returnExports = root.elliptical.$Sort;
     }
 }(this, function (Class,Location) {
@@ -2229,7 +2229,6 @@
     var Validation=Service.extend({
         '@resource':'Validation', //{String},
         $provider:$Validation,
-        schemas:null,
 
         /**
          * @param {object} data
@@ -2238,25 +2237,9 @@
          * @public
          */
         post: function (data, name, callback) {
-            if (this.schemas && !this.$provider.schemas) {
-                this.$provider.schemas = this.schemas;
-            }
             this.$provider.post(data,name,callback);
         },
 
-        /**
-         *
-         * @param {object} data
-         * @param {string} name
-         * @param {function} callback
-         * @public
-         */
-        put: function (data, name, callback) {
-            if (this.schemas && !this.$provider.schemas) {
-                this.$provider.schemas = this.schemas;
-            }
-            this.$provider.put(data, name, callback);
-        },
 
         /**
          *
