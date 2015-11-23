@@ -1,7 +1,7 @@
 {
   "name": "elliptical-soa",
   "description": "Elliptical Service Oriented Architecture",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "author": "S. Francis",
   "license": "MIT",
   "repository": {
